@@ -1,0 +1,37 @@
+# Environment files (local overrides)
+.env
+.env.local
+.env.*.local
+
+# Secrets
+.secrets
+secrets.json
+
+# Docker volumes/data (never commit)
+scrypted-data/
+*.db
+*.ldb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Dependencies (regeneratable)
+node_modules/
+dist/
+build/
+
+# Coolify specific
+coolify/
+.coolify

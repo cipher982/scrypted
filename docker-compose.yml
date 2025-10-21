@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  scrypted:
+    image: ghcr.io/koush/scrypted:nvidia
+    container_name: scrypted-homekit
+    network_mode: host
+    restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse
+    security_opt:
+      - apparmor:unconfined
+    ulimits:
+      nofile:
+        soft: 1024
+        hard: 1024
+    environment:
+      # GPU Configuration
+      SCRYPTED_NVIDIA_GPU: "true"
+      NVIDIA_DRIVER_CAPABILITIES: all
+      NVIDIA_VISIBLE_DEVICES: all
+
+      # HomeKit/mDNS Configuration
+      # Use host's avahi daemon instead of container's
+      SCRYPTED_DOCKER_AVAHI: "true"
+
+      # Network Advertisement
+      SCRYPTED_ADVERTISE_ADDRESS: "192.168.1.66"
+
+      # Server Configuration
+      SCRYPTED_INSECURE_PORT: "11080"
+      SCRYPTED_SECURE_PORT: "10443"
+
+      # Performance
+      NODE_OPTIONS: "--max-old-space-size=4096"
+
+    volumes:
+      # Persistent configuration (LevelDB database + plugins)
+      - /opt/scrypted-data:/server/volume:rw
+
+      # Optional: Host D-Bus and Avahi (for mDNS coordination)
+      - /run/dbus:/run/dbus:ro
+      - /run/avahi-daemon:/run/avahi-daemon:ro
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:10443/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
