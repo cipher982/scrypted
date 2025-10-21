@@ -7,7 +7,7 @@ Self-hosted HomeKit integration for IP cameras and smart home devices.
 - **Cameras**: Eufy Indoor, Amcrest, TP-Link Tapo
 - **Network**: 192.168.1.x home network
 - **HomeKit**: Full bridge mode with camera streaming
-- **GPU**: NVIDIA RTX 3090 (x2) acceleration for video processing
+- **Processing**: CPU-only (GPU disabled)
 
 ## Network Configuration
 
@@ -58,7 +58,7 @@ All settings stored in `/opt/scrypted-data/scrypted.db/` (LevelDB):
 3. GitHub: `https://github.com/cipher982/scrypted`
 4. Branch: `main`
 5. Compose file: `docker-compose.yml`
-6. Enable GPU support in Coolify settings
+6. Do NOT enable GPU support (running CPU-only)
 
 ### Via Docker Compose (Standalone)
 
@@ -78,15 +78,12 @@ docker run -d \
   --device=/dev/fuse \
   --security-opt apparmor:unconfined \
   --ulimit nofile=1024:1024 \
-  -e SCRYPTED_NVIDIA_GPU=true \
-  -e NVIDIA_DRIVER_CAPABILITIES=all \
-  -e NVIDIA_VISIBLE_DEVICES=all \
   -e SCRYPTED_DOCKER_AVAHI=true \
   -e SCRYPTED_ADVERTISE_ADDRESS=192.168.1.66 \
   -v /opt/scrypted-data:/server/volume \
   -v /run/dbus:/run/dbus:ro \
   -v /run/avahi-daemon:/run/avahi-daemon:ro \
-  ghcr.io/koush/scrypted:nvidia
+  ghcr.io/koush/scrypted:latest
 ```
 
 ## HomeKit Pairing

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   scrypted:
-    image: ghcr.io/koush/scrypted:nvidia
+    image: ghcr.io/koush/scrypted:latest
     container_name: scrypted-homekit
     network_mode: host
     restart: unless-stopped
@@ -17,11 +17,6 @@ services:
         soft: 1024
         hard: 1024
     environment:
-      # GPU Configuration
-      SCRYPTED_NVIDIA_GPU: "true"
-      NVIDIA_DRIVER_CAPABILITIES: all
-      NVIDIA_VISIBLE_DEVICES: all
-
       # HomeKit/mDNS Configuration
       # Use host's avahi daemon instead of container's
       SCRYPTED_DOCKER_AVAHI: "true"
