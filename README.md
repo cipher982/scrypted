@@ -4,7 +4,7 @@ Self-hosted HomeKit integration for IP cameras and smart home devices.
 
 ## Overview
 
-- **Cameras**: Eufy Indoor, Amcrest, TP-Link Tapo
+- **Cameras**: Amcrest Front Porch Left, TP-Link Tapo C120
 - **Network**: 192.168.1.x home network
 - **HomeKit**: Full bridge mode with camera streaming
 - **Processing**: CPU-only (GPU disabled)
@@ -43,11 +43,11 @@ All settings stored in `/opt/scrypted-data/scrypted.db/` (LevelDB):
 
 | Camera | IP | Resolution | RTSP Stream |
 |--------|----|-----------:|-------------|
-| Eufy Indoor | 192.168.1.110 | 1920x1080 | `rtsp://Gm9alqGSRwki:Nh3gY9RDso2z@192.168.1.110/live0` |
 | Amcrest Front Porch Left | 192.168.1.111 | 3840x2160 (4K) | `rtsp://admin:pepperFiber..@192.168.1.111/cam/realmonitor?channel=1&subtype=0` |
 | TP-Link Tapo C120 | 192.168.1.151 | 2560x1440 (2K) | `rtsp://drose123:pepperFiber..@192.168.1.151:554/stream1` |
 
 **Note**: Amcrest plugin has "Automatically Configure Settings" **disabled** (requires digest auth which plugin cannot handle).
+**Removed**: The old `192.168.1.110` Eufy/Stopsign camera was deleted from Scrypted on 2026-04-14 and is no longer part of the active HomeKit setup.
 
 ## Deployment
 
@@ -176,6 +176,13 @@ sudo kopia snapshot restore <snapshot-id> \
 - Cube Infrastructure: ~/git/mytech/infrastructure/crestwood.md
 
 ## Changelog
+
+### 2026-04-14
+
+- **Camera Cleanup**
+  - Removed the dead `192.168.1.110` Eufy/Stopsign camera from Scrypted
+  - Cleared its stale HomeKit accessory metadata and orphan bridge references
+  - Verified only the Amcrest `192.168.1.111` and Tapo `192.168.1.151` cameras remain active
 
 ### 2025-10-21
 
