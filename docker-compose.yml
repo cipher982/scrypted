@@ -3,8 +3,11 @@ services:
     image: ghcr.io/koush/scrypted:latest
     network_mode: host
     restart: unless-stopped
+    environment:
+      SCRYPTED_DOCKER_AVAHI: "true"
     volumes:
       - /opt/scrypted-data:/server/volume
+      - /opt/scrypted-data/avahi-daemon.conf:/etc/avahi/avahi-daemon.conf:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "-k", "https://localhost:10443/"]
       interval: 30s

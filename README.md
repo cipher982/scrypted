@@ -15,7 +15,7 @@ Self-hosted HomeKit integration for IP cameras and smart home devices.
 
 - **Network Mode**: `host` - Required for proper HomeKit mDNS advertisement
 - **IP**: 192.168.1.66 (cube server)
-- **mDNS**: Uses host's avahi-daemon for discovery
+- **mDNS**: Scrypted runs Avahi in-container with a bind-mounted config at `/opt/scrypted-data/avahi-daemon.conf`
 - **Ports**:
   - 10443: HTTPS web interface (HomeKit accessory protocol)
   - 11080: HTTP web interface (debug/UI)
@@ -67,6 +67,30 @@ ssh cube
 cd /opt/scrypted && docker-compose up -d
 ```
 
+Required host file on `cube`:
+
+```bash
+cat >/opt/scrypted-data/avahi-daemon.conf <<'EOF'
+[server]
+use-ipv4=yes
+use-ipv6=no
+enable-dbus=yes
+allow-interfaces=enp7s0
+ratelimit-interval-usec=1000000
+ratelimit-burst=1000
+
+[wide-area]
+enable-wide-area=yes
+
+[rlimits]
+rlimit-core=0
+rlimit-data=4194304
+rlimit-fsize=0
+rlimit-nofile=768
+rlimit-stack=4194304
+EOF
+```
+
 ### Via Docker CLI
 
 ```bash
@@ -79,10 +103,8 @@ docker run -d \
   --security-opt apparmor:unconfined \
   --ulimit nofile=1024:1024 \
   -e SCRYPTED_DOCKER_AVAHI=true \
-  -e SCRYPTED_ADVERTISE_ADDRESS=192.168.1.66 \
   -v /opt/scrypted-data:/server/volume \
-  -v /run/dbus:/run/dbus:ro \
-  -v /run/avahi-daemon:/run/avahi-daemon:ro \
+  -v /opt/scrypted-data/avahi-daemon.conf:/etc/avahi/avahi-daemon.conf:ro \
   ghcr.io/koush/scrypted:latest
 ```
 
@@ -102,7 +124,9 @@ docker run -d \
 **Devices not appearing in HomeKit:**
 - Verify mDNS advertisement: `avahi-browse -r _hap._tcp`
 - Should show: `address = [192.168.1.66]` (not Docker IP)
+- If it resolves to `192.168.122.1` or another bridge address, check `/opt/scrypted-data/avahi-daemon.conf`
 - Check network connectivity: `ping 192.168.1.66` from iPhone
+- On Docker-heavy hosts, raise multicast memberships: `sudo sysctl -w net.ipv4.igmp_max_memberships=512`
 
 **Connection timeout after discovery:**
 - Verify firewall allows port range 41000-48000 from 192.168.1.x
@@ -158,7 +182,7 @@ sudo kopia snapshot restore <snapshot-id> \
 - **Migration from Coolify**
   - Changed from bridge networking to host networking
   - Enabled SCRYPTED_DOCKER_AVAHI for proper mDNS
-  - Added explicit ADVERTISE_ADDRESS configuration
+  - Bound `/opt/scrypted-data/avahi-daemon.conf` into the container to keep mDNS on `enp7s0`
   - Added health checks
   - Added logging configuration
 
