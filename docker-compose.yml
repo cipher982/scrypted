@@ -5,6 +5,24 @@ services:
     restart: unless-stopped
     environment:
       SCRYPTED_DOCKER_AVAHI: "true"
+    command:
+      - /bin/sh
+      - -lc
+      - |
+        ulimit -c 0
+        if [ -d /run/service/dbus ]; then
+          rm -f /run/service/dbus/down
+          /command/s6-svc -u /run/service/dbus
+        fi
+        if [ -d /run/service/avahi ]; then
+          rm -f /run/service/avahi/down
+          /command/s6-svc -u /run/service/avahi
+        fi
+        for _ in 1 2 3 4 5; do
+          /usr/sbin/avahi-daemon --check >/dev/null 2>&1 && break
+          sleep 1
+        done
+        exec npm --prefix /server exec scrypted-serve
     volumes:
       - /opt/scrypted-data:/server/volume
       - /opt/scrypted-data/avahi-daemon.conf:/etc/avahi/avahi-daemon.conf:ro
