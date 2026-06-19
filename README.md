@@ -51,20 +51,23 @@ All settings stored in `/opt/scrypted-data/scrypted.db/` (LevelDB):
 
 ## Deployment
 
-### Via Coolify
+### Current Production Deploy
 
-1. Create new Coolify project
-2. Select "Git Repository"
-3. GitHub: `https://github.com/cipher982/scrypted`
-4. Branch: `main`
-5. Compose file: `docker-compose.yml`
-6. Do NOT enable GPU support (running CPU-only)
+Scrypted runs directly on cube from `/home/drose/manual-apps/scrypted/`.
+Persistent state stays in `/opt/scrypted-data`.
 
-### Via Docker Compose (Standalone)
+```bash
+rsync -az ~/git/scrypted/docker-compose.yml cube:/home/drose/manual-apps/scrypted/docker-compose.yml
+ssh cube 'cd /home/drose/manual-apps/scrypted && docker compose up -d'
+```
+
+Do NOT enable GPU support for this container; it is running CPU-only.
+
+### Docker Compose
 
 ```bash
 ssh cube
-cd /opt/scrypted && docker-compose up -d
+cd /home/drose/manual-apps/scrypted && docker compose up -d
 ```
 
 Required host file on `cube`:
