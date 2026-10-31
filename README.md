@@ -43,8 +43,10 @@ All settings stored in `/opt/scrypted-data/scrypted.db/` (LevelDB):
 
 | Camera | IP | Resolution | RTSP Stream |
 |--------|----|-----------:|-------------|
-| Amcrest Front Porch Left | 192.168.1.111 | 3840x2160 (4K) | `rtsp://admin:pepperFiber..@192.168.1.111/cam/realmonitor?channel=1&subtype=0` |
-| TP-Link Tapo C120 | 192.168.1.151 | 2560x1440 (2K) | `rtsp://drose123:pepperFiber..@192.168.1.151:554/stream1` |
+| Amcrest Front Porch Left | 192.168.1.111 | 3840x2160 (4K) | `rtsp://$AMCREST_USER:$AMCREST_PASSWORD@192.168.1.111/cam/realmonitor?channel=1&subtype=0` |
+| TP-Link Tapo C120 | 192.168.1.151 | 2560x1440 (2K) | `rtsp://$TAPO_C120_USER:$TAPO_C120_PASSWORD@192.168.1.151:554/stream1` |
+
+**Credentials**: never kept in this repo. Amcrest: Infisical `ops-infra` / `prod` keys `AMCREST_USER` and `AMCREST_PASSWORD`. Tapo C120: `TAPO_C120_USER` and `TAPO_C120_PASSWORD` (host `TAPO_C120_HOST`, ready-made stream URL `TAPO_C120_RTSP_MAIN`). Find them with `infisical-find tapo` or `infisical-find amcrest`.
 
 **Note**: Amcrest plugin has "Automatically Configure Settings" **disabled** (requires digest auth which plugin cannot handle).
 **Removed**: The old `192.168.1.110` Eufy/Stopsign camera was deleted from Scrypted on 2026-04-14 and is no longer part of the active HomeKit setup.
